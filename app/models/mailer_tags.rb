@@ -26,7 +26,7 @@ module MailerTags
       mailer_name =  tag_attr[:name]
       tag.locals.mailer_name =  mailer_name
       # Build the html form tag...
-      results =  %Q(<form action="#{ url }" method="post" class="#{tag_attr[:class]}" enctype="multipart/form-data">)
+      results =  %Q(<form action="#{ url }" method="post" class="#{tag_attr[:class]} #{add_attrs_to("", tag_attr)}" enctype="multipart/form-data">)
       results << %Q(<div><input type="hidden" name="mailer_name" value="#{mailer_name}" /></div>)
       results << %Q(<div class="mailer-error">#{form_error}</div>) if form_error
       results << tag.expand
@@ -54,7 +54,7 @@ module MailerTags
 
     end
 
-    # Build tags for all of the <input /> tags...  except submit
+    # Build tags for all of the <input /> tags...  except submit/image
     %w(text password file reset checkbox radio hidden).each do |type|
       desc %{
       Renders a #{type} form control for a mailer form. #{"The 'name' attribute is required." unless %(submit reset).include? type}
@@ -70,12 +70,18 @@ module MailerTags
       Renders a submit form control for a mailer form.
     }
     tag "mailer:submit" do |tag|
-      @tag_attr = tag.attr.symbolize_keys
-      @tag_attr[ :name ] = "mailer-form-button"
-      @tag_attr[ :onclick ] = "showSubmitPlaceholder()"
+      @tag_attr = tag.attr.symbolize_keys.merge(default_submit_attrs)
       input_tag_html( 'submit' )
     end
-
+    
+    desc %{
+      Renders a image form control for a mailer form.
+    }
+    tag "mailer:image" do |tag|
+      @tag_attr = tag.attr.symbolize_keys.merge(default_submit_attrs)
+      input_tag_html( 'image' )
+    end
+    
     desc %{
       Renders a hidden div containing the contents of the submit_placeholder page part. The
       div will be shown when a user submits a mailer form.
@@ -289,6 +295,13 @@ module MailerTags
     class_name = 'mailer-button' if class_name.nil? and %(submit reset).include? type
     class_name = 'mailer-option' if class_name.nil? and %(checkbox radio).include? type
     class_name
+  end
+  
+  def default_submit_attrs
+    {
+      :name => "mailer-form-button",
+      :onclick => "showSubmitPlaceholder()"
+    }
   end
   
   # Raises a 'name missing' tag error
