@@ -8,6 +8,11 @@ Ported to 'mental' by: Sean Cribbs - seancribbs.com
   Version: 0.1
   Contact: seancribbs@gmail.com
 
+File upload facility and submit placeholder
+  by: Tobin Richard, Tricycle Developments - tricycledevelopments.com
+    Version: 0.2
+    Contact: tobin.richard@gmail.com
+
 The Mailer extension enables form mail on a page. You can define email
 templates using pages parts (email, and/or email_html). You configure
 the recipients and other Mailer settings in a config part. Following
@@ -36,6 +41,9 @@ The following tags are available to help you build the form:
     <r:mailer:option name="" />
     <r:mailer:submit />
     <r:mailer:reset />
+    <r:mailer:submit_placeholder />
+
+... and the following to help you build the email or email_html templates.
     <r:mailer:get name="" />
 
 Simple example of a form:
@@ -49,9 +57,47 @@ Simple example of a form:
  <r:mailer:submit value="Send" />
 </r:mailer:form>
 
+Forms with file attachments:
+
+In many cases it is desirable to limit the maximum size of a file that may be uploaded.
+This is set as the max_filesize attribute for mailers in the config page part. Any file
+included in the form will have the limit imposed. Following is a simple example config
+part that includes a file size limit of 100,000 bytes:
+    mailers:
+      contact:
+        subject: From the website of Whatever
+        from: noreply@mydomain.com
+        redirect_to: /contact/thank-you
+        max_filesize: 100000
+        recipients:
+          - one@one.com
+          - two@two.com
+
+The following is a simple form that might be used to submit a file for the above
+configuration:
+    <r:mailer:form name="contact">
+        Type your message: <r:mailer:text name="themessage" /> <br/>
+        Select a file: <r:mailer:file name="thefile" /> <br/>
+        <r:mailer:submit value="submit"/>
+    </r:mailer:form>
+
+If a user does not select a file the other form contents will still be e-mailed. 
+The <r:mailer:get name="foo" /> (with <r:mailer:file name="foo" />) will provide the
+uploaded file name.
+
+If you are using email or email_html parts then the <r:mailer:get name="" /> tag can be
+used to retrieve the name of the uploaded file. If no file was uploaded "" will be
+returned.
+
+If you wish to show show that activity is taking place during submission you may use
+the <r:mailer:submit_placeholder /> tag in your form. This will insert a hidden div with
+the contents of the submit_placeholder page part. The div will be displayed when the
+user clicks any submit button.
 
 Todo:
  * Abstract tag naming, doesn't need to mimick HTML input types
- * Support for file attachments to emails
  * Validate recipient emails addresses -- at least the format
  * Better Error handling
+ * Status indicator during file uploads
+ * Check _all_ file attachment sizes before displaying any file size errors rather
+   than stopping at the first.
