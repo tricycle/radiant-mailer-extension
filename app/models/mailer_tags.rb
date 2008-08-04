@@ -75,7 +75,7 @@ module MailerTags
     end
     
     desc %{
-      Renders a image form control for a mailer form.
+      Renders a image form control for a mailer form. The 'src' attribute is required.
     }
     tag "mailer:image" do |tag|
       @tag_attr = tag.attr.symbolize_keys.merge(default_submit_attrs)
@@ -172,7 +172,7 @@ module MailerTags
     end
 
     desc %{
-    Renders a <textarea>...</textarea> tag for a mailer form. The `name' attribute is required. }
+    Renders a <pre><code><textarea>...</textarea></code></pre> tag for a mailer form. The `name' attribute is required. }
     tag 'mailer:textarea' do |tag|
       @tag_attr = { :id=>tag.attr['name'], :class=>get_class_name('textarea'), :rows=>'5', :cols=>'35' }.update( tag.attr.symbolize_keys )
       raise_error_if_name_missing "mailer:textarea"
