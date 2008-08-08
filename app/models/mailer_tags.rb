@@ -26,7 +26,7 @@ module MailerTags
       mailer_name =  tag_attr[:name]
       tag.locals.mailer_name =  mailer_name
       # Build the html form tag...
-      results =  %Q(<form action="#{ url }" method="post" class="#{tag_attr[:class]} #{add_attrs_to("", tag_attr)}" enctype="multipart/form-data">)
+      results =  %Q(<form action="#{ url }" method="post" class="#{tag_attr[:class]}" #{add_attrs_to("", tag_attr)} enctype="multipart/form-data">)
       results << %Q(<div><input type="hidden" name="mailer_name" value="#{mailer_name}" /></div>)
       results << %Q(<div class="mailer-error">#{form_error}</div>) if form_error
       results << tag.expand
