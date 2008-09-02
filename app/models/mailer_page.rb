@@ -28,9 +28,14 @@ class MailerPage < Page
       @form_conf = config['mailers'][form_name].symbolize_keys || {}
       # If there are recipients defined, send email...
       if recipients
-        if send_mail and form_conf.has_key? :redirect_to
-          response.redirect( form_conf[:redirect_to], "302 Found" )
+        if required_fields_filled?
+          if send_mail and form_conf.has_key? :redirect_to
+            response.redirect( form_conf[:redirect_to], "302 Found" )
+          else
+            super(request, response)
+          end
         else
+          @form_error = "#{required_fields.to_sentence.capitalize} #{required_fields.size == 1 ? 'is' : 'are'} required."
           super(request, response)
         end
       else
@@ -57,6 +62,17 @@ class MailerPage < Page
       form_conf[:recipients]
       end
     end
+    
+  def required_fields_filled?
+    required_fields.each do |field|
+      return false if form_data[field].blank?
+    end
+    return true
+  end  
+  
+  def required_fields
+    form_conf[:required_fields] || []
+  end
 
   def from
     form_data[form_conf[:from_field]] || form_conf[:from] || "no-reply@#{request.host}"
