@@ -28,14 +28,14 @@ class MailerPage < Page
       @form_conf = config['mailers'][form_name].symbolize_keys || {}
       # If there are recipients defined, send email...
       if recipients
-        if required_fields_filled?
+        if form_valid?
           if send_mail and form_conf.has_key? :redirect_to
             response.redirect( form_conf[:redirect_to], "302 Found" )
           else
             super(request, response)
           end
         else
-          @form_error = "#{required_fields.to_sentence.capitalize} #{required_fields.size == 1 ? 'is' : 'are'} required."
+          @form_error = "#{required_fields.keys.to_sentence.capitalize} #{required_fields.size == 1 ? 'is' : 'are'} required."
           super(request, response)
         end
       else
@@ -50,6 +50,13 @@ class MailerPage < Page
   # We need to process the page everytime, so that we can send the email!
   def cache?
     false
+  end  
+  
+  def form_valid? 
+    required_fields.each do |field, validation|
+      return false unless is_valid?(field, validation)
+    end
+    return true
   end
 
   protected
@@ -62,16 +69,27 @@ class MailerPage < Page
       form_conf[:recipients]
       end
     end
-    
-  def required_fields_filled?
-    required_fields.each do |field|
-      return false if form_data[field].blank?
+  
+  def is_valid?(field, validation)
+    case validation
+      when 'as_email'  then form_data[field] =~ /^[^@]+@([^@.]+\.)[^@]+$/
+      when 'not_blank' then !form_data[field].blank?
+      else true
     end
-    return true
-  end  
+  end
   
   def required_fields
-    form_conf[:required_fields] || []
+    field_validations = {}
+    (form_conf[:required_fields] || []).each do |field|
+      if field.is_a? Hash
+        field.each do |key, value|
+          field_validations[key] = value
+        end
+      else
+        field_validations[field] = 'not_blank'
+      end
+    end
+    field_validations
   end
 
   def from
