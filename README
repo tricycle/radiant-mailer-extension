@@ -27,6 +27,22 @@ mailers:
     recipients:
       - one@one.com
       - two@two.com
+      
+Required fields:
+
+You can specify fields which must be populated or the form will be
+invalid and will redisplay the page with an error informing the user
+to populate those fields. You can also specify fields which must be
+validated 'as_email' (i.e. a@b.com). These settings are put in the 
+config part. eg:
+
+mailers:
+  contact:
+    [...]
+    required_fields:
+      - email: as_email
+      - firstname
+      - surname
 
 The following tags are available to help you build the form:
     <r:mailer:form name=""> ... </r:mailer:form> 
