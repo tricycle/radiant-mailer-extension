@@ -139,37 +139,6 @@ module MailerTags
 </select>
       HTML
     end
-    
-    desc %{
-    Renders a @<select>...</select>@ tag for a mailer form that allows the user
-    to select a recipient for the form. The list of possible choices has to be
-    specified in the 'config' pagepart like so:
-    mailers:
-      general_enquiry:
-        recipient_list:
-          'General questions': 'support@example.com'
-          'Technical assistance': 'techsupport@example.com'
-    }
-    tag 'mailer:selectrecipient' do |tag|
-      fieldname = 'recipient_choice'
-      @tag_attr = {
-        :id => fieldname, :class => get_class_name('select'),
-      }.update( tag.attr.symbolize_keys )
-      # require 'ruby-debug';debugger
-      form_conf = tag.locals.page.config['mailers'][tag.locals.mailer_name].symbolize_keys
-      options = if form_conf[:recipient_list]
-        form_conf[:recipient_list].collect do |label, address|
-          %Q{  <option value="#{label}">#{label}</option>\n}
-        end
-      else
-        ''
-      end
-      results = <<-HTML
-<select name="mailer[#{fieldname}]" #{add_attrs_to("")}>
-#{options}
-</select>
-      HTML
-    end
 
     desc %{
     Renders a <pre><code><textarea>...</textarea></code></pre> tag for a mailer form. The `name' attribute is required. }
