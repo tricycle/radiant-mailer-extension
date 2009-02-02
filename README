@@ -1,5 +1,18 @@
 = Mailer Extension for Radiant
 
+WARNING TO DEVELOPERS:
+This code forked from github.com/radiant/radiant-mailer-extension before a
+major refactoring of that code. Contributions to this code are extremely
+unlikely to be pulled into the main repo. Your coding efforts would probably be
+better spent on extending and improving the main repo (or porting our feature
+extensions to the main repo).
+
+WARNING TO USERS:
+This code is in production for us on several sites, but is not as well
+supported as the code at github.com/radiant/radiant-mailer-extension (though as
+at 2009-02-02 ours has some extra features). If you don't need something we
+have that they don't, you should probably use their code.
+
 Created by: M@ McCray - mattmccray.com
    Version: 0.2.1
    Contact: mmccray@elucidata.net
