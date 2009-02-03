@@ -19,7 +19,6 @@ if File.directory?(File.dirname(__FILE__) + "/matchers")
 end
  
 include ApplicationHelper
-include DirectoryArray
  
 Spec::Runner.configure do |config|
   # config.use_transactional_fixtures = true

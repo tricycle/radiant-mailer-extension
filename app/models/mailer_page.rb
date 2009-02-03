@@ -59,16 +59,33 @@ class MailerPage < Page
     return true
   end
 
+  def self.canonicalize_recipients(recips)
+    return if recips.nil?
+    if recips.kind_of? Hash
+      # legacy hash has been specified - this is the default legacy behaviour, so we'll convert it to the new format
+      # convert the hash to an array, then convert each element to a single element hash
+      recips.to_a.map{|kv| {kv[0] => kv[1]}}
+    elsif recips.kind_of? Array
+      # new behaviour - assume an Array of single element hashes (this is light to defin in YAML, even though it sounds heavy)
+      # This allows the user to preserve sort order. No clean up needed, as this is the expected format.
+      recips
+    else
+      raise "incorrect recipient_list format. Expected Array or Hash, got #{recips.class}"
+    end
+  end
+
   protected
 
   def recipients
     chosen_recipient = form_data[:recipient_choice]
-    if form_conf[:recipient_list] && chosen_address = form_conf[:recipient_list][chosen_recipient]
+    recips = MailerPage.canonicalize_recipients(form_conf[:recipient_list])
+    # recipient list is stored as an array of single element hashes (to allow ordered hash functionality)
+    if recips && chosen_address = recips.find{|r| r.keys.first == chosen_recipient}.values.first
       [chosen_address]
-        else
+    else
       form_conf[:recipients]
-      end
     end
+  end
   
   def is_valid?(field, validation)
     case validation

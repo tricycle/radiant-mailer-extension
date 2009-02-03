@@ -124,10 +124,10 @@ module MailerTags
       @tag_attr = {
         :id => fieldname, :class => get_class_name('select'),
       }.update( tag.attr.symbolize_keys )
-      # require 'ruby-debug';debugger
       form_conf = tag.locals.page.config['mailers'][tag.locals.mailer_name].symbolize_keys
-      options = if form_conf[:recipient_list]
-        form_conf[:recipient_list].collect do |label, address|
+      options = if recips = MailerPage.canonicalize_recipients(form_conf[:recipient_list])
+        recips.collect do |label_address|
+          label = label_address.keys.first
           %Q{  <option value="#{label}">#{label}</option>\n}
         end
       else
