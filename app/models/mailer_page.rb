@@ -157,7 +157,8 @@ class MailerPage < Page
   # Does the work of actually sending the emails
   def send_mail
     create_actionmailer_deliver_method
-    ActionMailer::Base.deliver_generic_mailer(
+    
+    mail_contents = {
       :recipients => recipients,
       :from => from,
       :subject => subject,
@@ -167,7 +168,10 @@ class MailerPage < Page
       :headers => { 'Reply-To' => reply_to },
       :files => attached_files,
       :filesize_limit => max_filesize
-    )
+    }
+    logger.debug("Sending mail from mailer tag. Contents: #{mail_contents.inspect}")
+    
+    ActionMailer::Base.deliver_generic_mailer(mail_contents)
     true
   rescue
     @form_error = "Error encountered while trying to send email. #{$!}"
