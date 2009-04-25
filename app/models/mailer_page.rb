@@ -77,11 +77,12 @@ class MailerPage < Page
   protected
 
   def recipients
-    chosen_recipient = form_data[:recipient_choice]
+    chosen_recipient = CGI.unescapeHTML(form_data[:recipient_choice])
     recips = MailerPage.canonicalize_recipients(form_conf[:recipient_list])
     # recipient list is stored as an array of single element hashes (to allow ordered hash functionality)
-    if recips && chosen_address = recips.find{|r| r.keys.first == chosen_recipient}.values.first
-      [chosen_address]
+    choice = recips.find{|r| CGI.unescapeHTML(r.keys.first) == chosen_recipient} if recips
+    if choice
+      [CGI.unescapeHTML(choice.values.first)]
     else
       form_conf[:recipients]
     end
