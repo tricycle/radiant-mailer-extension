@@ -69,4 +69,10 @@ describe MailerPage do
       end
     end
   end
+
+  describe "#cache" do
+    it "should be true" do
+      MailerPage.new.cache?.should be_true
+    end
+  end
 end

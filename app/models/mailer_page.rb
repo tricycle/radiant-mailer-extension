@@ -47,9 +47,9 @@ class MailerPage < Page
     end
   end
 
-  # We need to process the page everytime, so that we can send the email!
+  # Radiant SiteController takes care of not caching POSTs
   def cache?
-    false
+    true
   end  
   
   def form_valid? 
