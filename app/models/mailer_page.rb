@@ -83,8 +83,10 @@ class MailerPage < Page
     choice = recips.find{|r| CGI.unescapeHTML(r.keys.first) == chosen_recipient} if recips
     if choice
       [CGI.unescapeHTML(choice.values.first)]
-    else
+    elsif form_conf[:recipients]
       form_conf[:recipients]
+    else
+      raise "Unable to determine recipient for chosen recipient: #{form_data[:recipient_choice]}"
     end
   end
   

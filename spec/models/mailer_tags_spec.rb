@@ -48,6 +48,7 @@ EOS
         page.instance_variable_set('@form_data', {:recipient_choice => 'Baz application'})
         form_conf = YAML.load(page_parts(:config).content)['mailers']['general-enquiry-form'].symbolize_keys
         page.instance_variable_set('@form_conf', form_conf)
+        page.instance_variable_set('@form_name', 'general-enquiry-form')
         page.send(:recipients).should == ['baz@example.com']
         ActionMailer::Base.should_receive(:deliver_generic_mailer).with(hash_including(:recipients => ['baz@example.com']))
         page.send(:send_mail)
@@ -101,9 +102,11 @@ EOS
       
       it "should be able to use recipient list to send mail" do
         page = pages(:mailer)
-        page.instance_variable_set('@form_data', {:recipient_choice => 'Baz application'})
+        page.instance_variable_set('@form_data',
+          {:recipient_choice => 'Baz application'})
         form_conf = YAML.load(page_parts(:config).content)['mailers']['general-enquiry-form'].symbolize_keys
         page.instance_variable_set('@form_conf', form_conf)
+        page.instance_variable_set('@form_name', 'general-enquiry-form')
         page.send(:recipients).should == ['baz@example.com']
         ActionMailer::Base.should_receive(:deliver_generic_mailer).with(hash_including(:recipients => ['baz@example.com']))
         page.send(:send_mail)
