@@ -77,19 +77,19 @@ class MailerPage < Page
   protected
 
   def recipients
-    chosen_recipient = CGI.unescapeHTML(form_data[:recipient_choice])
+    chosen_recipient = CGI.unescapeHTML(form_data[:recipient_choice]) if form_data[:recipient_choice]
     recips = MailerPage.canonicalize_recipients(form_conf[:recipient_list])
     # recipient list is stored as an array of single element hashes (to allow ordered hash functionality)
     choice = recips.find{|r| CGI.unescapeHTML(r.keys.first) == chosen_recipient} if recips
     if choice
-      [CGI.unescapeHTML(choice.values.first)]
+      [choice.values.first]
     elsif form_conf[:recipients]
       form_conf[:recipients]
     else
-      raise "Unable to determine recipient for chosen recipient: #{form_data[:recipient_choice]}"
+      raise "Unable to determine recipient for chosen recipient: #{form_data[:recipient_choice].inspect}"
     end
   end
-  
+
   def is_valid?(field, validation)
     case validation
       when 'as_email'  then form_data[field] =~ /^[^@]+@([^@.]+\.)[^@]+$/
