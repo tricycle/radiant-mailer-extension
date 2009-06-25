@@ -126,13 +126,11 @@ describe MailerPage do
 
       it "returns the chosen_recipient" do
         @form_data[:recipient_choice] = 'Another Choice'
-        @form_conf[:recipient_list] = [
-          { 'A Choice' => 'a_choice@example.com',
-            'Another Choice' => 'another_choice@example.com',
-            'Recipient Choice' => 'recipient_choice@example.com'
-          }
-        ]
-
+        @form_conf[:recipient_list] = {
+          'A Choice' => 'a_choice@example.com',
+          'Another Choice' => 'another_choice@example.com',
+          'Recipient Choice' => 'recipient_choice@example.com'
+        }
         @mp.send(:recipients).should == ['another_choice@example.com']
       end
 
