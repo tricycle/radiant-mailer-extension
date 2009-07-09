@@ -87,13 +87,10 @@ describe MailerPage do
       @mp.stub!(:form_data).and_return(@form_data)
     end
 
-    it "raises an exception if the recipient can't be determined" do
+    it "returns false if recipient is unknown" do
       @form_data[:recipient_choice] = 'Unknown Recipient'
 
-      lambda { @mp.send(:recipients) }.should raise_error(
-        %q{Unable to determine recipient for chosen recipient: "Unknown Recipient"}
-      )
-      
+      @mp.send(:recipients).should == false
     end
 
     describe "specified as an array of one element hashes" do

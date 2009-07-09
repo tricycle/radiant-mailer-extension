@@ -25,7 +25,7 @@ class MailerPage < Page
     if request.post?
       @form_name = request.parameters[:mailer_name]
       @form_data = request.parameters[:mailer]
-      @form_conf = config['mailers'][form_name].symbolize_keys || {}
+      @form_conf = (config['mailers'][form_name] || {}).symbolize_keys
       # If there are recipients defined, send email...
       if recipients
         if form_valid?
@@ -52,7 +52,7 @@ class MailerPage < Page
     true
   end  
   
-  def form_valid? 
+  def form_valid?
     required_fields.each do |field, validation|
       return false unless is_valid?(field, validation)
     end
@@ -86,7 +86,7 @@ class MailerPage < Page
     elsif form_conf[:recipients]
       form_conf[:recipients]
     else
-      raise "Unable to determine recipient for chosen recipient: #{form_data[:recipient_choice].inspect}"
+      false
     end
   end
 
