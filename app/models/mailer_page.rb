@@ -2,8 +2,6 @@ require 'action_mailer'
 class MailerPage < Page
   include MailerTags
 
-  TLDS = %w{com org net edu info mil gov biz ws}
-
   class MailerTagError < StandardError; end
 
   attr_reader :form_name, :form_conf, :form_error, :form_data, :tag_attr
