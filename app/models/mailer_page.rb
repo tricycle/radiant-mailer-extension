@@ -147,11 +147,9 @@ class MailerPage < Page
   end
 
   def attached_files
-    files = []
-    form_data.each_value do |d|
-      files << d if d.is_a?(Tempfile) || d.class == StringIO
-  end
-    files
+    form_data.values.select do |f|
+      f.respond_to?(:read)
+    end
   end
 
   

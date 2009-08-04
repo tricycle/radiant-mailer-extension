@@ -11,6 +11,31 @@ describe MailerPage do
       @mp.stub!(:form_data).and_return(@form_data)
     end
 
+    describe 'attached files' do
+      it 'should default to empty' do
+        @form_data.clear
+        @mp.send(:attached_files).should be_empty
+      end
+      it 'should not contain String, Bool or Array objects' do
+        @form_data[:boolean] = true
+        @form_data[:not_a_file] = "not a file"
+        @form_data[:an_array] = [:an, :array]
+        @mp.send(:attached_files).should be_empty
+      end
+      it 'should contain StringIO objects' do
+        @form_data[:a_file] = file = StringIO.new()
+        @mp.send(:attached_files).should include(file)
+      end
+      it 'should contain Tempfile objects' do
+        @form_data[:a_file] = file = ::Tempfile.new("foo")
+        @mp.send(:attached_files).should include(file)
+      end
+      it 'should work with any class that responds to read' do
+        @form_data[:a_file] = file = mock('fake file', :read => "foo")
+        @mp.send(:attached_files).should include(file)
+      end
+    end
+
     describe 'no required fields' do
       it 'should be valid if field is empty' do
         @form_data['name'] = ''

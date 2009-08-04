@@ -3,7 +3,7 @@ require 'hpricot'
 
 describe MailerPage do
   
-  scenario :home_page
+  dataset :home_page
   
   context 'when recipients are specified as a hash' do
     before(:each) do
@@ -36,7 +36,7 @@ EOS
         # pages('mailer').should render('<r:mailer:form name="general-enquiry-form"><r:mailer:selectrecipient /></r:mailer:form>').matching(
         #   /<select name="mailer\[recipient_choice\]".*?>.*</)
         expected = ['Foo enquiry', 'Bar enquiry', 'Baz application']
-        doc = Hpricot(pages('mailer').send(:parse, '<r:mailer:form name="general-enquiry-form"><r:mailer:selectrecipient /></r:mailer:form>'))
+        doc = Hpricot(pages(:mailer).send(:parse, '<r:mailer:form name="general-enquiry-form"><r:mailer:selectrecipient /></r:mailer:form>'))
         (doc/"form/select/option").each{|option|
           expected.should be_member(option['value'])
           expected.should be_member(option.inner_html)
@@ -87,7 +87,7 @@ EOS
       it "should render each recipent in order" do
         # pages('mailer').should render('<r:mailer:form name="general-enquiry-form"><r:mailer:selectrecipient /></r:mailer:form>').matching(
         #   /<select name="mailer\[recipient_choice\]".*?>.*</)
-        doc = Hpricot(pages('mailer').send(:parse, '<r:mailer:form name="general-enquiry-form"><r:mailer:selectrecipient /></r:mailer:form>'))
+        doc = Hpricot(pages(:mailer).send(:parse, '<r:mailer:form name="general-enquiry-form"><r:mailer:selectrecipient /></r:mailer:form>'))
         
         (doc.at("form > select > option:nth(0)")['value']).should == 'Foo enquiry'
         (doc.at("form > select > option:nth(0)").inner_html).should == 'Foo enquiry'
